@@ -1,0 +1,19 @@
+{
+  "name": "dcc-notion-cli",
+  "version": "1.0.0",
+  "description": "A CLI tool for executing Node.js scripts used for common administration tasks when working with the devCodeCamp Notion workspace.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jjvega86/dCC-Notion-CLI.git"
+  },
+  "author": "JJ Vega",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jjvega86/dCC-Notion-CLI/issues"
+  },
+  "homepage": "https://github.com/jjvega86/dCC-Notion-CLI#readme"
+}
