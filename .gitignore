@@ -70,3 +70,9 @@ assets/img/.DS_Store
 
 # VSCode related files #
 # .vscode
+
+# Environment Variables
+/.env
+
+# Local Assets
+/assets
