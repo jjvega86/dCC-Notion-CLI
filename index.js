@@ -6,7 +6,7 @@
  *
  * @author JJ Vega <https://github.com/jjvega86>
  */
-
+const prompt = require('prompt-sync')();
 const init = require('./utils/init');
 const cli = require('./utils/cli');
 const log = require('./utils/log');
