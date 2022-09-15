@@ -133,6 +133,6 @@ const addDatesToClassSchedule = async client => {
 };
 
 module.exports = {
-	default: addDatesToClassEvents,
+	default: addDatesToClassSchedule,
 	isWeekend: isNonSchoolDay
 };
