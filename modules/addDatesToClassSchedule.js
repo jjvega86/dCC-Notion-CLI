@@ -132,4 +132,7 @@ const addDatesToClassSchedule = async client => {
 	process.on('exit', () => console.log('Dates added to class schedule!'));
 };
 
-export { addDatesToClassSchedule as default, isNonSchoolDay as isWeekend };
+module.exports = {
+	default: addDatesToClassEvents,
+	isWeekend: isNonSchoolDay
+};
