@@ -9,8 +9,13 @@
 const init = require('./utils/init');
 const cli = require('./utils/cli');
 const log = require('./utils/log');
+const { Client } = require('@notionhq/client');
+const {
+	addDatesToClassSchedule
+} = require('./modules/addDatesToClassSchedule');
 require('dotenv').config();
 
+const notion = new Client({ auth: process.env.NOTION_KEY });
 const input = cli.input;
 const flags = cli.flags;
 const { clear, debug } = flags;
@@ -18,7 +23,6 @@ const { clear, debug } = flags;
 (async () => {
 	init({ clear });
 	input.includes(`help`) && cli.showHelp(0);
-	//TODO: Import notion from client.js, pass into "factory" menu function for core features
-
 	debug && log(flags);
+	input.includes(`schedule`) && addDatesToClassSchedule(notion);
 })();

@@ -27,11 +27,12 @@ const flags = {
 };
 
 const commands = {
-	help: { desc: `Print help info` }
+	help: { desc: `Print help info` },
+	schedule: { desc: `Add course schedule with dates to Notion database` }
 };
 
 const helpText = meowHelp({
-	name: `dcc-notion`,
+	name: `dcc`,
 	flags,
 	commands
 });
