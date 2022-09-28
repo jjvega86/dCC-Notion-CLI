@@ -1,9 +1,6 @@
 const NotionEvent = require('../classes/notionEvent');
 const fs = require('fs');
-const path = require('path');
 const csv = require('fast-csv');
-
-const __dirname = path.resolve();
 
 /*
 Parse a .csv file containing data for a devCodeCamp course template
@@ -13,7 +10,7 @@ Return a collection of custom events to be added to a Notion database using offi
 async function parseCourseTemplate(courseCSV) {
 	let data = [];
 	return new Promise((resolve, reject) => {
-		fs.createReadStream(path.join(__dirname, courseCSV))
+		fs.createReadStream(courseCSV)
 			.pipe(csv.parse({ headers: true }))
 			.on('error', error => reject(error))
 			.on('data', row => {

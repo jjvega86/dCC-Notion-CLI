@@ -17,7 +17,10 @@ const formatDatabaseData = data => {
 	return formattedData;
 };
 
+const delay = interval => new Promise(resolve => setTimeout(resolve, interval));
+
 module.exports = {
 	studentValidate,
-	formatDatabaseData
+	formatDatabaseData,
+	delay
 };

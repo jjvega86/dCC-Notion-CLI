@@ -10,19 +10,18 @@ const init = require('./utils/init');
 const cli = require('./utils/cli');
 const log = require('./utils/log');
 const { Client } = require('@notionhq/client');
-const {
-	addDatesToClassSchedule
-} = require('./modules/addDatesToClassSchedule');
+const addClassSchedule = require('./modules/addClassSchedule');
 require('dotenv').config();
 
 const notion = new Client({ auth: process.env.NOTION_KEY });
 const input = cli.input;
 const flags = cli.flags;
 const { clear, debug } = flags;
+addClassSchedule(notion);
 
 (async () => {
 	init({ clear });
 	input.includes(`help`) && cli.showHelp(0);
 	debug && log(flags);
-	input.includes(`schedule`) && addDatesToClassSchedule(notion);
+	input.includes(`schedule`) && addClassSchedule(notion);
 })();

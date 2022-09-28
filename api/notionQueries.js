@@ -1,11 +1,13 @@
 const {
 	studentValidate,
-	formatDatabaseData
+	formatDatabaseData,
+	delay
 } = require('../helpers/notionHelpers');
 
 const getClassSchedule = async (client, databaseId) => {
 	// retrieve class schedule from Notion, sorted by day ascending for ease of adding dates
 	try {
+		delay(1000);
 		let response = await client.databases.query({
 			database_id: databaseId,
 			sorts: [{ property: 'Day', direction: 'ascending' }]
@@ -95,10 +97,14 @@ const addStudentToActiveStudents = async (client, databaseId, student) => {
 
 /* Add custom course events to a Notion database  */
 
-const addEventsToDatabase = (client, databaseId, data) => {
-	data.forEach(courseEvent => {
+const addEventsToDatabase = async (client, databaseId, data) => {
+	data.forEach(async courseEvent => {
 		try {
-			addNotionCourseEventToDatabase(client, databaseId, courseEvent);
+			await addNotionCourseEventToDatabase(
+				client,
+				databaseId,
+				courseEvent
+			);
 		} catch (error) {
 			console.error(error);
 		}
