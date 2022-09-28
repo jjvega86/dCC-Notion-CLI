@@ -7,7 +7,6 @@ const {
 const getClassSchedule = async (client, databaseId) => {
 	// retrieve class schedule from Notion, sorted by day ascending for ease of adding dates
 	try {
-		delay(1000);
 		let response = await client.databases.query({
 			database_id: databaseId,
 			sorts: [{ property: 'Day', direction: 'ascending' }]
