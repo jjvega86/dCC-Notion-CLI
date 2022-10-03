@@ -1,6 +1,5 @@
 const prompt = require('prompt-sync')();
 const { getClassSchedule } = require('../api/notionQueries');
-const { delay } = require('../helpers/notionHelpers');
 
 const parseClassScheduleEvents = events => {
 	// whittle down raw Notion data into objects with only the necessary properties
@@ -89,25 +88,25 @@ function addDatesToClassEvents(events, classDates) {
 }
 
 const updateClassEvents = async (client, eventsWithDates) => {
-	for (let index = 0; index < eventsWithDates.length; index++) {
-		try {
-			await client.pages.update({
-				page_id: eventsWithDates[index].pageId,
-				properties: {
-					'Date Assigned': {
-						date: {
-							start: eventsWithDates[index].start,
-							end: eventsWithDates[index].end
-								? eventsWithDates[index].end
-								: null
+	await Promise.all(
+		eventsWithDates.map(async event => {
+			try {
+				await client.pages.update({
+					page_id: event.pageId,
+					properties: {
+						'Date Assigned': {
+							date: {
+								start: event.start,
+								end: event.end ? event.end : null
+							}
 						}
 					}
-				}
-			});
-		} catch (error) {
-			console.error(error);
-		}
-	}
+				});
+			} catch (error) {
+				console.error(error);
+			}
+		})
+	);
 };
 
 const addDatesToClassSchedule = async client => {
@@ -116,6 +115,7 @@ const addDatesToClassSchedule = async client => {
 		prompt('How many days are in the course?')
 	);
 
+	//TODO: 🐞 -> updateClassEvents timing out + not getting all events
 	let notionEvents = await getClassSchedule(
 		client,
 		process.env.NOTION_CLASS_SCHEDULE_ID
@@ -129,7 +129,6 @@ const addDatesToClassSchedule = async client => {
 	);
 
 	let eventsWithDates = addDatesToClassEvents(parsedEvents, classDates);
-	//TODO: 🐞 -> updateClassEvents timing out + not getting all events
 	await updateClassEvents(client, eventsWithDates);
 	process.on('exit', () => console.log('Dates added to class schedule!'));
 };
