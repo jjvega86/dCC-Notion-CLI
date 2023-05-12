@@ -19,6 +19,10 @@ const input = cli.input;
 const flags = cli.flags;
 const { clear, debug } = flags;
 
+// To run commands, type 'dcc + command below' 👇
+// Ex. 'dcc schedule' will run the schedule utility
+// Quick Tutorial: https://www.youtube.com/watch?v=dfTpFFZwazI&ab_channel=JamesQQuick
+
 (async () => {
 	init({ clear });
 	input.includes(`help`) && cli.showHelp(0);
