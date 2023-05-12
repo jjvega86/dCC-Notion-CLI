@@ -15,6 +15,5 @@ module.exports = async client => {
 		process.env.NOTION_CLASS_SCHEDULE_ID,
 		finalData
 	);
-	// }
 	await addDatesToClassSchedule(client);
 };

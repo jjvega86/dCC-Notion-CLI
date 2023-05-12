@@ -39,23 +39,7 @@ function isNonSchoolDay(date) {
 
 function isHoliday(date) {
 	// add any holidays in the year using strings in the below array
-	let holidays = [
-		'2021-11-25',
-		'2021-11-26',
-		'2021-12-24',
-		'2021-12-25',
-		'2021-12-26',
-		'2021-12-27',
-		'2021-12-28',
-		'2021-12-29',
-		'2021-12-30',
-		'2021-12-31',
-		'2022-01-01',
-		'2022-01-02',
-		'2022-05-30',
-		'2022-07-04',
-		'2022-09-05'
-	];
+	let holidays = ['2023-05-29', '2023-09-04'];
 	if (holidays.includes(formatDate(date))) {
 		return true;
 	} else {
@@ -87,26 +71,25 @@ function addDatesToClassEvents(events, classDates) {
 	return eventsWithDates;
 }
 
+//! THIS IS WHERE THE RATE LIMITING ISSUE IS HAPPENING
 const updateClassEvents = async (client, eventsWithDates) => {
-	await Promise.all(
-		eventsWithDates.map(async event => {
-			try {
-				await client.pages.update({
-					page_id: event.pageId,
-					properties: {
-						'Date Assigned': {
-							date: {
-								start: event.start,
-								end: event.end ? event.end : null
-							}
+	eventsWithDates.map(async event => {
+		try {
+			await client.pages.update({
+				page_id: event.pageId,
+				properties: {
+					'Date Assigned': {
+						date: {
+							start: event.start,
+							end: event.end ? event.end : null
 						}
 					}
-				});
-			} catch (error) {
-				console.error(error);
-			}
-		})
-	);
+				}
+			});
+		} catch (error) {
+			console.error(error);
+		}
+	});
 };
 
 const addDatesToClassSchedule = async client => {

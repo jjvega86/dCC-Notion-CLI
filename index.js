@@ -14,10 +14,11 @@ const addClassSchedule = require('./modules/addClassSchedule');
 require('dotenv').config();
 
 const notion = new Client({ auth: process.env.NOTION_KEY });
+
+addClassSchedule(notion);
 const input = cli.input;
 const flags = cli.flags;
 const { clear, debug } = flags;
-addClassSchedule(notion);
 
 (async () => {
 	init({ clear });
