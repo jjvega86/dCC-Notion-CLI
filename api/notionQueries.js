@@ -1,20 +1,32 @@
 const {
 	studentValidate,
-	formatDatabaseData,
-	delay
+	formatDatabaseData
 } = require('../helpers/notionHelpers');
 
 const getClassSchedule = async (client, databaseId) => {
 	// retrieve class schedule from Notion, sorted by day ascending for ease of adding dates
-	try {
-		let response = await client.databases.query({
-			database_id: databaseId,
-			sorts: [{ property: 'Day', direction: 'ascending' }]
-		});
-		return response.results;
-	} catch (error) {
-		console.log(error);
+	const results = [];
+	let nextCursor = undefined;
+	while (true) {
+		try {
+			let response = await client.databases.query({
+				database_id: databaseId,
+				sorts: [{ property: 'Day', direction: 'ascending' }],
+				start_cursor: nextCursor,
+				page_size: 100
+			});
+			results.push(...response.results);
+			nextCursor = response.next_cursor;
+
+			if (!response.has_more) {
+				break;
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	}
+
+	return results;
 };
 
 /* Add student objects from .csv to Active Students */
@@ -97,17 +109,19 @@ const addStudentToActiveStudents = async (client, databaseId, student) => {
 /* Add custom course events to a Notion database  */
 
 const addEventsToDatabase = async (client, databaseId, data) => {
-	data.forEach(async courseEvent => {
-		try {
-			await addNotionCourseEventToDatabase(
-				client,
-				databaseId,
-				courseEvent
-			);
-		} catch (error) {
-			console.error(error);
-		}
-	});
+	await Promise.all(
+		data.map(async courseEvent => {
+			try {
+				await addNotionCourseEventToDatabase(
+					client,
+					databaseId,
+					courseEvent
+				);
+			} catch (error) {
+				console.error(error);
+			}
+		})
+	);
 };
 
 const addNotionCourseEventToDatabase = async (client, databaseId, event) => {
@@ -142,7 +156,6 @@ const addNotionCourseEventToDatabase = async (client, databaseId, event) => {
 				}
 			}
 		});
-		console.log(response);
 	} catch (error) {
 		console.error(error);
 	}

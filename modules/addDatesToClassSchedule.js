@@ -71,25 +71,30 @@ function addDatesToClassEvents(events, classDates) {
 	return eventsWithDates;
 }
 
-//! THIS IS WHERE THE RATE LIMITING ISSUE IS HAPPENING
-const updateClassEvents = async (client, eventsWithDates) => {
-	eventsWithDates.map(async event => {
-		try {
-			await client.pages.update({
-				page_id: event.pageId,
-				properties: {
-					'Date Assigned': {
-						date: {
-							start: event.start,
-							end: event.end ? event.end : null
-						}
+const updateEvent = async (client, event) => {
+	try {
+		return await client.pages.update({
+			page_id: event.pageId,
+			properties: {
+				'Date Assigned': {
+					date: {
+						start: event.start,
+						end: event.end ? event.end : null
 					}
 				}
-			});
-		} catch (error) {
-			console.error(error);
-		}
+			}
+		});
+	} catch (error) {
+		console.error(error);
+	}
+};
+//! THIS IS WHERE THE RATE LIMITING ISSUE IS HAPPENING
+const updateClassEvents = async (client, eventsWithDates) => {
+	let promises = eventsWithDates.map(event => {
+		return updateEvent(client, event);
 	});
+
+	await Promise.all(promises);
 };
 
 const addDatesToClassSchedule = async client => {
@@ -98,7 +103,6 @@ const addDatesToClassSchedule = async client => {
 		prompt('How many days are in the course?')
 	);
 
-	//TODO: 🐞 -> updateClassEvents timing out + not getting all events
 	let notionEvents = await getClassSchedule(
 		client,
 		process.env.NOTION_CLASS_SCHEDULE_ID
@@ -111,6 +115,7 @@ const addDatesToClassSchedule = async client => {
 		formatDate
 	);
 
+	//TODO: 🐞 -> updateClassEvents timing out + not getting all events
 	let eventsWithDates = addDatesToClassEvents(parsedEvents, classDates);
 	await updateClassEvents(client, eventsWithDates);
 	process.on('exit', () => console.log('Dates added to class schedule!'));
