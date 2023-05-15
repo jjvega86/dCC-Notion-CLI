@@ -126,7 +126,7 @@ const addEventsToDatabase = async (client, databaseId, data) => {
 
 const addNotionCourseEventToDatabase = async (client, databaseId, event) => {
 	try {
-		let response = await client.pages.create({
+		await client.pages.create({
 			parent: {
 				database_id: databaseId
 			},

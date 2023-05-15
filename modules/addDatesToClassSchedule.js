@@ -1,5 +1,6 @@
 const prompt = require('prompt-sync')();
 const { getClassSchedule } = require('../api/notionQueries');
+const ora = require('ora');
 
 const parseClassScheduleEvents = events => {
 	// whittle down raw Notion data into objects with only the necessary properties
@@ -88,7 +89,7 @@ const updateEvent = async (client, event) => {
 		console.error(error);
 	}
 };
-//! THIS IS WHERE THE RATE LIMITING ISSUE IS HAPPENING
+
 const updateClassEvents = async (client, eventsWithDates) => {
 	let promises = eventsWithDates.map(event => {
 		return updateEvent(client, event);
@@ -103,6 +104,8 @@ const addDatesToClassSchedule = async client => {
 		prompt('How many days are in the course?')
 	);
 
+	const spinner = ora('Adding dates to schedule!').start();
+
 	let notionEvents = await getClassSchedule(
 		client,
 		process.env.NOTION_CLASS_SCHEDULE_ID
@@ -115,10 +118,10 @@ const addDatesToClassSchedule = async client => {
 		formatDate
 	);
 
-	//TODO: 🐞 -> updateClassEvents timing out + not getting all events
 	let eventsWithDates = addDatesToClassEvents(parsedEvents, classDates);
 	await updateClassEvents(client, eventsWithDates);
-	process.on('exit', () => console.log('Dates added to class schedule!'));
+	spinner.succeed('Dates added to schedule!');
+	process.exit();
 };
 
 module.exports = {
